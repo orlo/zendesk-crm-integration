@@ -33,7 +33,14 @@ $app->get('/iframe', function(Request $request, Response $response) use ($app) {
     $zendesk = $app->getContainer()->get('zendesk');
     $user = $zendesk->users()->find($id);
 
-    $content = $app->getContainer()->get('twig')->render('iframe.twig', ['user' => $user]);
+    $user = $user->user;
+
+    $userArray = [
+        'name' => $user->name,
+        'email' => $user->email,
+    ];
+
+    $content = $app->getContainer()->get('twig')->render('iframe.twig', ['user' => $userArray]);
     $response->getBody()->write($content);
     return $response;
 });
@@ -56,7 +63,7 @@ $app->get('/search', function(Request $request, Response $response) use ($app) {
             'id' => $user->id,
             'name' => $user->name,
         ];
-    }, $users);
+    }, $users->users);
 
     return $response->withJson($data);
 });
