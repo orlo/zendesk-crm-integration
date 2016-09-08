@@ -1,0 +1,15 @@
+{
+    "name": "socialsignin/zendesk-crm-integration",
+    "type": "project",
+    "require": {
+        "slim/slim": "^3.5",
+        "zendesk/zendesk_api_client_php": "^2.1",
+        "twig/twig": "^1.24"
+    },
+    "authors": [
+        {
+            "name": "William Redman",
+            "email": "william.redman@socialsignin.co.uk"
+        }
+    ]
+}
