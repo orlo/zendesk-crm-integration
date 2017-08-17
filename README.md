@@ -1,22 +1,38 @@
 # SocialSignIn ZenDesk CRM integration
 
-## Setup 
+Allows you to integrate your Zendesk account with SocialSignIn.
 
- * You need to know your ZenDesk SubDomain (ZENDESK\_SUBDOMAIN) (e.g. YourCompanyName). This would normally be in the URL you use for ZenDesk (e.g. https://YourCompanyName.zendesk.com)
- * You need to have a ZenDesk User (ZENDESK\_USERNAME) and API Token (ZENDESK\_TOKEN)
- * You need to have a shared secret with SocialSignIn (see below). (SECRET)
+The documentation uses 'myserver.example.com' - replace this with a valid hostname for where you are hosting this code. It's recommended you secure it with a valid SSL certificate.
 
-The above variables are added to an Apache (or similar) configuration (or hard coded into public/index.php, but this isn't ideal). 
+## SocialSignIn App Configuration
 
-An Apache example is below.
+Within the SocialSignIn application, head to https://app.socialsignin.net/#/settings/inbox and add a Custom CRM integration.
+
+ * Name - something of your choosing
+ * Search Endpoint URL - https://myserver.example.com/search
+ * Search Endpoint Secret - LongStringlyThingOfYourChoosing (aka SECRET)
+ * Iframe Endpoint URL - https://myserver.example.com/iframe
+ * Iframe Endpoint Secret - LongStringlyThingOfYourChoosing (aka SECRET)
+
+( For this integration, the Search and Iframe Endpoint Secrets need to be the same )
 
 ### SocialSignIn Secret 
 
-When SocialSignIn make requests on your integration, the requests are signed with a shared secret (SECRET) which you can check against, to ensure a third party isn't trying to access your data.
+When SocialSignIn make requests on your integration, the requests are signed with a shared secret (SECRET) which you can check against, to ensure a third party isn't trying to access your pipedrive data.
 
 You define this secret when adding the CRM integration within SocialSignIn. It can be a string of any length (although as with all passwords, longer is generally better).
 
-### Apache Configuration Example
+
+## ZenDesk Setup 
+
+ * You need to know your ZenDesk SubDomain (ZENDESK\_SUBDOMAIN) (e.g. YourCompanyName). This would normally be in the URL you use for ZenDesk (e.g. https://YourCompanyName.zendesk.com)
+ * You need to have a ZenDesk User (ZENDESK\_USERNAME) and API Token (ZENDESK\_TOKEN)
+
+The above variables are added to an Apache (or similar) configuration (or hard coded into public/index.php, but this isn't ideal). 
+
+# Installation 
+
+## Apache Configuration Example
  
  * Code is checked out/deployed to /sites/zendesk.crm-integration and it's to respond to the domain name myserver.example.com
 
@@ -32,7 +48,7 @@ You define this secret when adding the CRM integration within SocialSignIn. It c
     SetEnv ZENDESK_SUBDOMAIN mycompanyname
     SetEnv ZENDESK_USERNAME  something@mycompanyname.com
     SetEnv ZENDESK_TOKEN     ALongStringOfAlphaNumerics
-    SetEnv SECRET            a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+    SetEnv SECRET            TheSecretYouSpecifiedWithinSocialSignInApp
     
     <Directory "/sites/zendesk.crm-integration/public">
         AllowOverride All
@@ -43,7 +59,7 @@ You define this secret when adding the CRM integration within SocialSignIn. It c
 </VirtualHost>
 ```
 
-### Software Dependencies
+## Software Dependencies
 
 You need to have :
 
@@ -58,8 +74,7 @@ Within the root of the application, run :
 php composer.phar install
 ```
 
-### Logging
+## Logging
 
 If /sites/zendesk.crm-integration/logs/app.log is writeable by the web server, then Monolog will write to it.
-
 
