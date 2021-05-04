@@ -39,7 +39,7 @@ $app->add(function (Request $request, Response $response, $next) use ($app) {
 
     /* @var Logger $logger */
 
-    $logger = $app->get('logger');
+    $logger = $app->getContainer()->get('logger');
 
     if ($sig === null || $expires === null || $expires < time()) {
         $logger->error("Request missing sig/expires, or expires < time", [$sig, $expires, time()]);
