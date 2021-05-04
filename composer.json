@@ -12,5 +12,8 @@
             "name": "William Redman",
             "email": "william.redman@socialsignin.co.uk"
         }
-    ]
+    ],
+    "require-dev": {
+        "vimeo/psalm": "^4.7"
+    }
 }
