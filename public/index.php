@@ -36,7 +36,7 @@ $container['twig'] = function (): Twig_Environment {
     return new Twig_Environment($loader, []);
 };
 
-$app->add(function (Request $request, Response $response, $next) use ($app) {
+$app->add(function (Request $request, Response $response, Callable $next) use ($app) {
 
     $sig = $request->getQueryParam('sig', null);
     $expires = $request->getQueryParam('expires', null);
@@ -99,7 +99,7 @@ $app->get('/search', function (Request $request, Response $response) use ($app) 
         'query' => $query
     ]);
 
-    $data = array_map(function ($user) {
+    $data = array_map(function (stdClass $user) {
         return [
             'id' => $user->id,
             'name' => $user->name,
