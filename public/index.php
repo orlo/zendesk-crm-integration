@@ -2,32 +2,36 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Monolog\Handler\NullHandler;
+use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Slim\App;
+use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Zendesk\API\HttpClient;
 
-$app = new App();
+$container = new Container();
+$app = new App($container);
 
-$container = $app->getContainer();
+$container['logger'] = function(): Logger {
+    $logger = new Logger('zendesk-crm-integration');
+    if (is_writeable(dirname(__FILE__) . '/logs/app.log')) {
+        $logger->pushHandler(new RotatingFileHandler(dirname(__FILE__) . '/logs/app.log', 10));
+    } else {
+        $logger->pushHandler(new NullHandler());
+    }
+    return $logger;
+};
 
-$logger = new Logger('zendesk-crm-integration');
-if (is_writeable(dirname(__FILE__) . '/logs/app.log')) {
-    $logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(dirname(__FILE__) . '/logs/app.log', 10));
-} else {
-    $logger->pushHandler(new \Monolog\Handler\NullHandler());
-}
-
-$container['logger'] = $logger;
-
-$container['zendesk'] = function () {
-    $client = new \Zendesk\API\HttpClient(getenv('ZENDESK_SUBDOMAIN'));
+$container['zendesk'] = function (): HttpClient {
+    $client = new HttpClient(getenv('ZENDESK_SUBDOMAIN'));
     $client->setAuth('basic', ['username' => getenv('ZENDESK_USERNAME'), 'token' => getenv('ZENDESK_TOKEN')]);
 
     return $client;
 };
 
-$container['twig'] = function () {
+$container['twig'] = function (): Twig_Environment {
     $loader = new Twig_Loader_Filesystem(__DIR__ . '/../template');
     return new Twig_Environment($loader, []);
 };
@@ -63,10 +67,10 @@ $app->get('/iframe', function (Request $request, Response $response) use ($app) 
 
     $id = $request->getQueryParam('id', null);
     if (!isset($id) || empty($id)) {
-        throw new \InvalidArgumentException('Missing required param: id');
+        throw new InvalidArgumentException('Missing required param: id');
     }
 
-    /* @var $zendesk \Zendesk\API\HttpClient */
+    /* @var $zendesk HttpClient */
     $zendesk = $app->getContainer()->get('zendesk');
     $user = $zendesk->users()->find($id);
 
@@ -86,10 +90,10 @@ $app->get('/search', function (Request $request, Response $response) use ($app) 
 
     $query = $request->getQueryParam('q', null);
     if (!isset($query) || empty($query)) {
-        throw new \InvalidArgumentException('Missing required param: q');
+        throw new InvalidArgumentException('Missing required param: q');
     }
 
-    /* @var $zendesk \Zendesk\API\HttpClient */
+    /* @var $zendesk HttpClient */
     $zendesk = $app->getContainer()->get('zendesk');
     $users = $zendesk->users()->search([
         'query' => $query
