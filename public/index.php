@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -9,7 +7,29 @@ use Slim\App;
 use Slim\Container;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Symfony\Component\Dotenv\Dotenv;
 use Zendesk\API\HttpClient;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = new Dotenv();
+
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv->load(__DIR__ . '/../.env'); // else hope it's in $_ENV magically.
+}
+
+// TODO create class to validate and assign env variables
+
+if (getenv('ZENDESK_SUBDOMAIN') === false) {
+    throw new InvalidArgumentException('Check .env / ENV vars; no ZENDESK_SUBDOMAIN found');
+} else {
+    define('ZENDESK_SUBDOMAIN', getenv('ZENDESK_SUBDOMAIN'));
+}
+if (getenv('SEARCH_SECRET') === false) {
+    throw new InvalidArgumentException('Check .env / ENV vars; no SEARCH_SECRET found');
+} else {
+    define('SEARCH_SECRET', getenv('SEARCH_SECRET'));
+}
 
 $container = new Container();
 $app = new App($container);
@@ -25,9 +45,8 @@ $container['logger'] = function(): Logger {
 };
 
 $container['zendesk'] = function (): HttpClient {
-    $client = new HttpClient(getenv('ZENDESK_SUBDOMAIN'));
+    $client = new HttpClient(ZENDESK_SUBDOMAIN);
     $client->setAuth('basic', ['username' => getenv('ZENDESK_USERNAME'), 'token' => getenv('ZENDESK_TOKEN')]);
-
     return $client;
 };
 
@@ -53,7 +72,7 @@ $app->add(function (Request $request, Response $response, Callable $next) use ($
     $params = $request->getQueryParams();
     unset($params['sig']);
 
-    $expected_sig = hash_hmac('sha256', http_build_query($params), getenv('SECRET'));
+    $expected_sig = hash_hmac('sha256', http_build_query($params), SEARCH_SECRET);
 
     if ($expected_sig !== $sig) {
         $logger->error("Request has invalid sig.", ['expected' => $expected_sig, 'actual' => $sig]);
