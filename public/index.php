@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -9,8 +11,6 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Symfony\Component\Dotenv\Dotenv;
 use Zendesk\API\HttpClient;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = new Dotenv();
 
