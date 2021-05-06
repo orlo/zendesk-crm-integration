@@ -19,5 +19,8 @@
     ],
     "require-dev": {
         "vimeo/psalm": "*"
+    },
+    "scripts" : {
+        "psalm" : "@php -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/psalm --threads==$(nproc --all) --show-info=false --no-cache "
     }
 }
