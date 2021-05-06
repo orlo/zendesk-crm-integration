@@ -1,7 +1,10 @@
 {
     "name": "socialsignin/zendesk-crm-integration",
     "type": "project",
+    "license": "BSD-3-Clause",
+    "description": "Example code showing an Orlo CRM integraton with zendesk",
     "require": {
+        "php" : ">= 7.2",
         "slim/slim": "^3.5",
         "zendesk/zendesk_api_client_php": "^2.1",
         "twig/twig": "^1.24",
@@ -10,11 +13,11 @@
     },
     "authors": [
         {
-            "name": "William Redman",
-            "email": "william.redman@socialsignin.co.uk"
+            "name": "Orlo",
+            "email": "technical+zendesk-crm@orlo.tech"
         }
     ],
     "require-dev": {
-        "vimeo/psalm": "^4.7"
+        "vimeo/psalm": "*"
     }
 }
