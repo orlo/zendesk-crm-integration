@@ -4,7 +4,7 @@
     "license": "BSD-3-Clause",
     "description": "Example code showing an Orlo CRM integraton with zendesk",
     "require": {
-        "php" : ">= 7.2",
+        "php" : "^8.0",
         "slim/slim": "^3.5",
         "zendesk/zendesk_api_client_php": "^2.1",
         "twig/twig": "^1.24",
